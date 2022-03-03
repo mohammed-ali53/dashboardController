@@ -95,7 +95,7 @@ const MobilityMap = () => {
 					value: '2022-03-01T06:30:00.000Z',
 				},
 			],
-			limit: 2500,
+			limit: 10000,
 			orderBy: ['timestamp', 'DESC'],
 		};
 
