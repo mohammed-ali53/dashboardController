@@ -9,44 +9,59 @@ import {
 } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import { useDebouncedCallback } from 'use-debounce';
+import { data } from './data';
+import 'react-leaflet-fullscreen/dist/styles.css';
+import { FullscreenControl } from 'react-leaflet-fullscreen';
 
 const MobilityMap = () => {
 	const [mobilityData, setMobilityData] = useState([]);
+	const [show, setShow] = useState(false);
 	const position = [32.960755, -96.716101];
+
+	// useEffect(() => {
+	// 	var arr = [];
+	// 	for (var i = 0; i < 4000; i++) {
+	// 		arr.push([
+	// 			+generateRandomCordinates(24, 40, 5),
+	// 			+-generateRandomCordinates(75, 104, 4),
+	// 		]);
+	// 	}
+	// 	console.log(arr);
+	// }, []);
 
 	const handleFetchData = (boundaries) => {
 		var apidata = {
 			attributes: [
-				'id',
+				// 'id',
 				'timestamp',
-				'timezone',
+				// 'timezone',
 				'longitude',
 				'latitude',
 				'location',
-				'device',
-				'brand',
-				'model',
-				'plmnID',
-				'networkType',
-				'pci',
-				'tac',
-				'bandInfo',
-				'bandwidth',
-				'rsrp',
-				'rsrq',
-				'rssi',
-				'cqi',
-				'sinr',
-				'throughput',
-				'rtt',
-				'deviceTaskTotal',
-				'deviceApplicationTask',
-				'deviceCPUUtilizationTotal',
-				'deviceCPUUtlizationApplication',
-				'timingAdvance',
-				'applicationId',
-				'userId',
-				'pluginId',
+				// 'device',
+				// 'brand',
+				// 'model',
+				// 'plmnID',
+				// 'networkType',
+				// 'pci',
+				// 'tac',
+				// 'bandInfo',
+				// 'bandwidth',
+				// 'rsrp',
+				// 'rsrq',
+				// 'rssi',
+				// 'cqi',
+				// 'sinr',
+				// 'throughput',
+				// 'rtt',
+				// 'deviceTaskTotal',
+				// 'deviceApplicationTask',
+				// 'deviceCPUUtilizationTotal',
+				// 'deviceCPUUtlizationApplication',
+				// 'timingAdvance',
+				// 'applicationId',
+				// 'userId',
+				// 'pluginId',
 			],
 			filters: [
 				{
@@ -69,8 +84,18 @@ const MobilityMap = () => {
 					Op: 'gt',
 					value: boundaries._southWest.lat,
 				},
+				{
+					key: 'timestamp',
+					Op: 'gt',
+					value: '2022-03-01T02:30:00.000Z',
+				},
+				{
+					key: 'timestamp',
+					Op: 'lt',
+					value: '2022-03-01T06:30:00.000Z',
+				},
 			],
-			limit: 6000,
+			limit: 2500,
 			orderBy: ['timestamp', 'DESC'],
 		};
 
@@ -85,13 +110,23 @@ const MobilityMap = () => {
 				console.log(err);
 			});
 	};
+	function generateRandomCordinates(min, max, precision) {
+		return (Math.random() * (max - min) + min).toPrecision(precision);
+	}
+
+	useEffect(() => {
+		setTimeout(() => {
+			setShow(true);
+			console.log('executed');
+		}, 3000);
+	}, []);
 
 	return (
 		<>
 			<MapContainer
 				style={{ height: '224px' }}
 				center={[position[0], position[1]]}
-				zoom={12}
+				zoom={4}
 			>
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -101,6 +136,18 @@ const MobilityMap = () => {
 					handleFetchData={handleFetchData}
 					mobilityData={mobilityData}
 				/>
+				<FullscreenControl />
+				{/* <MarkerClusterGroup>
+					{show &&
+						data?.map((item) => (
+							<Circle
+								center={item}
+								color='blue'
+								fillColor='blue'
+								radius={0.1}
+							/>
+						))}
+				</MarkerClusterGroup> */}
 			</MapContainer>
 		</>
 	);
@@ -110,7 +157,7 @@ const BoundaryBound = ({ handleFetchData, mobilityData }) => {
 	const map = useMap();
 	const debounced = useDebouncedCallback((updatedBoundary) => {
 		handleFetchData(updatedBoundary);
-	}, 2000);
+	}, 1500);
 
 	useMapEvents({
 		zoom: () => {
@@ -125,8 +172,10 @@ const BoundaryBound = ({ handleFetchData, mobilityData }) => {
 		handleFetchData(map.getBounds());
 	}, []);
 
+	map.fire('dataloading');
+
 	return (
-		<MarkerClusterGroup>
+		<MarkerClusterGroup disableClusteringAtZoom={12} chunkedLoading={true}>
 			{mobilityData?.map((item) => (
 				<Circle
 					center={[item?.latitude, item?.longitude]}

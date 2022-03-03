@@ -10,7 +10,6 @@ import Sidebar from '../../Components/Sidebar/Sidebar';
 import GeoMap from '../../Components/GeoMap';
 import MobilityMap from '../../Components/MobilityMap';
 import ScatterPlot from '../../Components/Charts/ScatterPlot';
-import MobilityMap1 from '../../Components/MobilityMap1';
 
 const Dashboard1 = () => {
 	const [open, setOpen] = useState(false);
@@ -92,7 +91,7 @@ const Dashboard1 = () => {
 												<div className='row'>
 													<div className='col-md-6'>
 														<div className='mapInner'>
-															{/* <MobilityMap1 /> */}
+															<MobilityMap />
 															<span className='mapInnerSpan verizonMap'>
 																Verizon
 															</span>
