@@ -110,16 +110,10 @@ const MobilityMap = () => {
 				console.log(err);
 			});
 	};
+
 	function generateRandomCordinates(min, max, precision) {
 		return (Math.random() * (max - min) + min).toPrecision(precision);
 	}
-
-	useEffect(() => {
-		setTimeout(() => {
-			setShow(true);
-			console.log('executed');
-		}, 3000);
-	}, []);
 
 	return (
 		<>
@@ -137,17 +131,6 @@ const MobilityMap = () => {
 					mobilityData={mobilityData}
 				/>
 				<FullscreenControl />
-				{/* <MarkerClusterGroup>
-					{show &&
-						data?.map((item) => (
-							<Circle
-								center={item}
-								color='blue'
-								fillColor='blue'
-								radius={0.1}
-							/>
-						))}
-				</MarkerClusterGroup> */}
 			</MapContainer>
 		</>
 	);
@@ -171,8 +154,6 @@ const BoundaryBound = ({ handleFetchData, mobilityData }) => {
 	useEffect(() => {
 		handleFetchData(map.getBounds());
 	}, []);
-
-	map.fire('dataloading');
 
 	return (
 		<MarkerClusterGroup disableClusteringAtZoom={12} chunkedLoading={true}>
